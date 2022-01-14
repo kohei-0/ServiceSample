@@ -1,8 +1,6 @@
 package com.example.servicesample
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
@@ -17,7 +15,6 @@ class SoundManageService : Service() {
     }
 
     //test
-
     companion object{
         //通知チャンネルIDの文字列定数
         private const val CHANNEL_ID = "soundmanagerservice_notification_channel"
@@ -75,6 +72,29 @@ class SoundManageService : Service() {
     private inner class PlayerPreparedListener : MediaPlayer.OnPreparedListener{
         override fun onPrepared(mp: MediaPlayer) {
             mp.start()
+            //Nofiticationを作成するBuilderクラス生成
+            val builder = NotificationCompat.Builder(this@SoundManageService, CHANNEL_ID)
+            //通知エリアに表示されるアイコンを設定
+            builder.setSmallIcon(android.R.drawable.ic_dialog_info)
+            //通知ドロワーでの表示タイトルを設定
+            builder.setContentTitle(getString(R.string.msg_notification_title_start))
+            //通知ドロワーでの表示メッセージを設定
+            builder.setContentText(getString(R.string.msg_notification_text_satrt))
+            //起動先Activityクラスを指定したIntent obj　生成
+            val intent = Intent(this@SoundManageService, MainActivity::class.java)
+            //起動先Activityに引き継ぎデータを格納
+            intent.putExtra("fromNotification", true)
+            //PendingIntentオブジェクトをビルダーに設定
+            val stopServiceIntent = PendingIntent.getActivity(this@SoundManageService, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+            //PendingIntent obj をbuilderに設定
+            builder.setContentIntent(stopServiceIntent)
+            //タップされた通知メッセージを自動的に消去するように設定
+            builder.setAutoCancel(true)
+            //BuilderからNotification objを生成
+            val notification = builder.build()
+            //Notification objを元にサービスをフォアグラウンド化
+            startForeground(200, notification)
+
         }
     }
 
