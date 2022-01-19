@@ -10,6 +10,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //Intent　通知のタップから引き継ぎデータを取得
+        val fromNotification = intent.getBooleanExtra("fromNotification", false)
+        //引き継ぎデータが存在、通知のタップからならば
+        if(fromNotification){
+            //再生ボタンをタップ不可に、停止ボタンをタップ可に
+            val btPlay = findViewById<Button>(R.id.btPlay)
+            val btStop = findViewById<Button>(R.id.btStop)
+            btPlay.isEnabled = false
+            btStop.isEnabled = true
+        }
     }
 
     fun onPlayButtonClick(view: View){
